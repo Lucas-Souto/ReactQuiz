@@ -1,0 +1,97 @@
+@import url('normalize.css');
+
+#game-container
+{
+    text-align: center;
+}
+
+#question
+{
+    font-size: 1.15em;
+}
+
+#alternatives
+{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+
+    margin: 0 auto;
+}
+
+.alternative
+{
+    cursor: pointer;
+    font-size: 1.2em;
+
+    padding: .4em;
+    margin-bottom: .2em;
+
+    border: none;
+    background-color: #E7E9EB;
+    transition: .2s linear;
+}
+
+.alternative:hover
+{
+    background-color: hsl(210, 12%, 82%);
+}
+
+.alternative:first-child
+{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.alternative:last-child
+{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#quiz #timer
+{
+    float: right;
+    font-size: 1.2em;
+
+    margin-right: 1em;
+}
+
+#victory
+{
+    display: flex;
+    flex-direction: column;
+}
+
+#victory-message
+{
+    margin: 0;
+}
+
+#victory #timer
+{
+    font-size: 1.5em;
+    font-weight: bold;
+
+    margin: .5em auto;
+}
+
+#try-again
+{
+    width: fit-content;
+    cursor: pointer;
+    font-size: 1.5em;
+
+    margin: 0 auto;
+    padding: .5em 1em;
+
+    color: white;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff234b;
+}
+
+#try-again:hover
+{
+    background-color: #e02043;
+}

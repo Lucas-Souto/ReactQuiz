@@ -3,12 +3,15 @@ const e = React.createElement;
 const quizLevels = 
 [
     level('Com quantos paus se faz uma canoa?', [alt('1', true), alt('Depende', true), alt('5', true), alt('3', true)]),
-    level('Quem descobriu o Brasil?', [alt('Pedro Alvares Cabral', true), alt('Jorge Lima', false), alt('Antônio Fagundes', false), alt('Cristóvão Colombo', false)])
+    level('Quem descobriu o Brasil?', [alt('Pedro Alvares Cabral', true), alt('Jorge Lima', false), alt('Antônio Fagundes', false), alt('Cristóvão Colombo', false)]),
+    level('Qual o tamanho de uma baleia?', [alt('Grande para burro', true)]),
+    level('Duvido acertar essa', [alt('Eu vou', false), alt('Essa é fácil', false), alt('Mas eu vou', false), alt('Eu sabia essa com maçãs', false)]),
+    level('...', [alt('Sim', false), alt('Não', false), alt('Provavelmente', true)])
 ];
 
 function level(question, alternatives)
 {
-    return { question: question, alternatives: alternatives.splice(0, 4) };
+    return { question: question, alternatives: alternatives };
 }
 
 function alt(text, isCorrect)
@@ -22,44 +25,45 @@ class Quiz extends React.Component
     {
         super(props);
 
-        this.state = { level: 0, win: false };
+        this.state = { level: 0, finished: false, points: 0 };
     }
 
     render()
     {
-        if (this.state.win)
+        if (this.state.finished)
         {
-            return e('div', null, 
-                e('h1', null, "Parabéns!!!!!!!!!!!!! Não fez mais que a sua obrigação."), 
+            return e('div', { id: 'victory' }, 
+                e('h2', { id: 'victory-message' }, `Você não fez mais que a obrigação e acertou ${this.state.points} de ${quizLevels.length} em: `),
                 e(Timer, { key: Timer.currentKey, playing: false }),
-                e('input', { type: 'button', value: 'Outra vez!', onClick: () => this.replay() })
+                e('input', { id: 'try-again', type: 'button', value: 'Outra vez!', onClick: () => this.replay() })
             );
         }
 
-        return e('div', null,
-            e(Timer, { key: Timer.currentKey, playing: true }), 
-            e('p', null, quizLevels[this.state.level].question),
-            quizLevels[this.state.level].alternatives.map((alt, i) => 
-                e('input', { key: i, type: 'button', value: alt.text, onClick: () => this.submitAnswer(i) })
-            )
+        return e('div', { id: 'quiz' },
+            e('h3', { id: 'level-indicator' }, `Questão ${this.state.level + 1} de ${quizLevels.length}`),
+            e('p', { id: 'question' }, quizLevels[this.state.level].question),
+            e('div', { id: 'alternatives' },
+                quizLevels[this.state.level].alternatives.map((alt, i) => 
+                    e('input', { className: 'alternative', key: i, type: 'button', value: alt.text, onClick: () => this.submitAnswer(i) })
+                )
+            ),
+            e(Timer, { key: Timer.currentKey, playing: true })
         );
     }
 
     submitAnswer(option)
     {
-        if (quizLevels[this.state.level].alternatives[option].correct)
-        {
-            if (this.state.level === quizLevels.length - 1) this.setState({ win: true });
-            else this.setState(state => ({ level: state.level + 1 }));
-        }
-        else this.replay();
+        if (quizLevels[this.state.level].alternatives[option].correct) this.setState(state => ({ points: state.points + 1 }));
+
+        if (this.state.level === quizLevels.length - 1) this.setState({ finished: true });
+        else this.setState(state => ({ level: state.level + 1 }));
     }
 
     replay()
     {
         Timer.currentKey++;
 
-        this.setState({ win: false, level: 0 });
+        this.setState({ finished: false, level: 0, points: 0 });
     }
 }
 
@@ -76,7 +80,7 @@ class Timer extends React.Component
 
     render()
     {
-        return e('p', null, this.Time);
+        return e('p', { id: 'timer' }, this.Time);
     }
 
     get Time()
@@ -106,5 +110,5 @@ class Timer extends React.Component
     }
 }
 
-const container = document.querySelector('#quiz-container');
-ReactDOM.render(e(Quiz), container);
+const container = document.querySelector('#game-container');
+ReactDOM.render([e('h1', { id: 'title', key: 0 }, 'React Quiz'), e(Quiz, { key: 1 })], container);
